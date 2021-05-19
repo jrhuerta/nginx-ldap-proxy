@@ -21,9 +21,7 @@ def challenge_response() -> web.Response:
         status=401,
         headers={
             "WWW-Authenticate": "Basic "
-            "realm=AlayaCare "
-            "documentation "
-            "site, "
+            "realm=Access restricted, "
             'charset="UTF-8"'
         },
     )
