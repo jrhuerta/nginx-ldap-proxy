@@ -53,7 +53,7 @@ async def ldap_auth(request: web.Request) -> web.Response:
             return web.Response(
                 status=204, headers={"Cache-Control": "public, max-age=1800"}
             )
-    except bonsai.AuthenticationError as ex:
+    except bonsai.LDAPError as ex:
         logging.debug(repr(ex))
         return challenge_response()
 
