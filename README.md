@@ -65,7 +65,7 @@ server {
 Docker command:
 ```bash
 docker run --rm -ti \
-    -e docker run -e LDAP_PROXY_URI \
+    -e LDAP_PROXY_URI \
     -e LDAP_PROXY_USERDN_TMPL \
     -e LDAP_PROXY_UPSTREAM_AUTH_TOKEN="secret"
 ```
