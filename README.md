@@ -9,25 +9,32 @@ Required environment variables:
 
 * **LDAP_PROXY_URI**: URI for the ldap endpoint to use for the bind.
 * **LDAP_PROXY_USERDN_TMPL**: Template to use for the user dn. The username provided 
-  through basic auth is interpolated with the keyword `{user}` 
+  through basic auth is interpolated with the keyword `{user}`
+* **LDAP_PROXY_UPSTREAM**: URI for the [default](/etc/nginx/conf.d/default.conf) proxy pass configuration
 
 Example configuration values for usage with JumpCloud:
 
 ```
 LDAP_PROXY_URI=ldaps://ldap.jumpcloud.com
 LDAP_PROXY_USERDN_TMPL="uid={user},ou=Users,o=1bd358766be23330473e9d5124389083,dc=jumpcloud,dc=com"
+LDAP_PROXY_UPSTREAM=http://www.google.com
 ```
+
 ## with Docker
 
 ```bash
-docker run -e LDAP_PROXY_URI -e LDAP_PROXY_USERDN_TMPL -p 8080:80 jrhuerta/nginx-ldap-proxy
+docker run \
+    -e LDAP_PROXY_URI=ldaps://ldap.jumpcloud.com \
+    -e LDAP_PROXY_USERDN_TMPL="uid={user},ou=Users,o=1bd358766be23330473e9d5124389083,dc=jumpcloud,dc=com" \
+    -e LDAP_PROXY_UPSTREAM="http://www.google.com" \
+    -p 8080:80 \
+    jrhuerta/nginx-ldap-proxy
 ```
 
 ## NGINX default configuration
 
-[/etc/nginx/conf.d/default.conf](/etc/nginx/conf.d/default.conf)
+[/etc/nginx/conf.d/default.tmpl](/etc/nginx/conf.d/default.tmpl)
 
-There is a simple `/var/www/index.html` file for basic testing porpoises.
 
 ## NGINX custom configuration
 
@@ -56,8 +63,7 @@ server {
 
     location / {
         auth_request        /auth;
-        proxy_pass          http://upsteam.local;
-        proxy_set_header    Authorization "Bearer ${LDAP_PROXY_UPSTREAM_AUTH_TOKEN}";
+        proxy_pass          ${LDAP_PROXY_UPSTREAM};
     }
 }
 ```
@@ -65,9 +71,9 @@ server {
 Docker command:
 ```bash
 docker run --rm -ti \
-    -e LDAP_PROXY_URI \
-    -e LDAP_PROXY_USERDN_TMPL \
-    -e LDAP_PROXY_UPSTREAM_AUTH_TOKEN="secret"
+    -e LDAP_PROXY_URI="<your_value>" \
+    -e LDAP_PROXY_USERDN_TMPL="<your_value>" \
+    -e LDAP_PROXY_UPSTREAM="<secure_content_uri>"
 ```
 
 Generated on startup:
@@ -89,6 +95,6 @@ server {
 
 ## Kubernetes
 
-* `.conf` and `.tmpl` files cna be mounted as ConfigMaps
+* `.conf` and `.tmpl` files can be mounted as ConfigMaps
 * secrets can be interpolated from environment variables.
 

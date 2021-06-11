@@ -14,7 +14,6 @@ RUN bash /install-nginx-debian.sh \
     && mkdir -p /var/www/html
 
 COPY etc/nginx /etc/nginx
-COPY index.html /var/www/html/
 
 RUN chown -R nginx:nginx /var/www/html
 
